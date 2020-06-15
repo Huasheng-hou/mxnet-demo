@@ -1,8 +1,9 @@
 from mxnet import autograd, nd
-import random
 from mxnet.gluon import data as gdata
 from mxnet.gluon import nn
-from d2lzh.d2lzh import linreg, squared_loss, sgd
+from mxnet import init
+from mxnet import gluon
+from mxnet.gluon import loss as gloss
 
 num_inputs = 2
 num_examples = 1000
@@ -20,18 +21,23 @@ b.attach_grad()
 
 lr = 0.03
 num_epochs = 5
-net = linreg
-loss = squared_loss
+loss = gloss.L2Loss()
 batch_size = 10
+
+net = nn.Sequential()
+net.add(nn.Dense(1))
+net.initialize(init.Normal(sigma=0.01))
+
+trainer = gluon.Trainer(net.collect_params(), 'sgd', {'learning_rate': 0.03})
 
 dataset = gdata.ArrayDataset(features, labels)
 data_iter = gdata.DataLoader(dataset, batch_size, shuffle=True)
 
-for epoch in range(num_epochs):
+for epoch in range(1, num_epochs+1):
     for X, y in data_iter:
         with autograd.record():
-            l = loss(net(X, w, b), y)
+            l = loss(net(X), y)
         l.backward()
-        sgd([w, b], lr, batch_size)
-    train_l = loss(net(features, w, b), labels)
-    print('epoch %d, loss %f' % (epoch + 1, train_l.mean().asnumpy()))
+        trainer.step(batch_size)
+    l = loss(net(features), labels)
+    print('epoch %d, loss %f' % (epoch, l.mean().asnumpy()))
