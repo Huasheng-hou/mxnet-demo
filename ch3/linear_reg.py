@@ -1,8 +1,7 @@
 from mxnet import autograd, nd
 from mxnet.gluon import data as gdata
 from mxnet.gluon import nn
-from mxnet import init
-from mxnet import gluon
+from mxnet import init, gluon
 from mxnet.gluon import loss as gloss
 
 num_inputs = 2

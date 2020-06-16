@@ -1,8 +1,6 @@
 from mxnet import autograd, nd
-import random
 from mxnet.gluon import data as gdata
-from mxnet.gluon import nn
-from d2lzh.d2lzh import linreg, squared_loss, sgd
+from d2lzh import linreg, squared_loss, sgd
 
 num_inputs = 2
 num_examples = 1000
