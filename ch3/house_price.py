@@ -70,8 +70,8 @@ def get_k_fold_data(k, i, X, y):
         elif X_train is None:
             X_train, y_train = X_part, y_part
         else:
-            X_train = nd.concat(X_train, X_part)
-            y_train = nd.concat(y_train, y_part)
+            X_train = nd.concat(X_train, X_part, dim=0)
+            y_train = nd.concat(y_train, y_part, dim=0)
     return X_train, y_train, X_valid, y_valid
 
 
@@ -81,8 +81,37 @@ def k_fold(k, X_train, y_train, num_epochs, learning_rate,
     for i in range(k):
         data = get_k_fold_data(k, i, X_train, y_train)
         net = get_net()
-        train_ls, valid_ls = train(net, *data, num_epochs, learning_rate, weight_decay, batch_size)
+        train_ls, valid_ls = train(net, *data, num_epochs,
+                                   learning_rate, weight_decay, batch_size)
         train_l_sum += train_ls[-1]
         valid_l_sum += valid_ls[-1]
         if i == 0:
-            d2l.semilogy()
+            d2l.semilogy(range(1, num_epochs + 1), train_ls, 'epochs', 'rmse',
+                         range(1, num_epochs + 1), valid_ls, ['train', 'valid'])
+        print('fold %d, train rmse %f, valid rmse %f' % (i, train_ls[-1], valid_ls[-1]))
+    return train_l_sum / k, valid_l_sum / k
+
+
+def train_and_pred(train_features, test_features, train_labels, test_data,
+                   num_epochs, lr, weight_decay, batch_size):
+    net = get_net()
+    train_ls, _ = train(net, train_features, train_labels, None, None,
+                        num_epochs, lr, weight_decay, batch_size)
+    d2l.semilogy(range(1, num_epochs + 1), train_ls, 'epochs', 'rmse')
+    print('train rmse %f' % train_ls[-1])
+    preds = net(test_features).asnumpy()
+    test_data['SalePrice'] = pd.Series(preds.reshape(1, -1)[0])
+
+    submission = pd.concat([test_data['Id'], test_data['SalePrice']], axis=1)
+    submission.to_csv('data/submission.csv', index=False)
+
+
+# k = 5
+num_epochs, lr, weight_decay, batch_size = 100, 5, 0, 12
+train_and_pred(train_features, test_features, train_labels, test_data,
+               num_epochs, lr, weight_decay, batch_size)
+
+# train_l, valid_l = k_fold(k, train_features, train_labels,
+# num_epochs, lr, weight_decay, batch_size)
+# print('%d-fold validation: avg train rmse %f, avg valid rmse %f'
+# % (k, train_l, valid_l))
