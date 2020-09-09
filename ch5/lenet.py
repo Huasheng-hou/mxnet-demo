@@ -17,10 +17,9 @@ train_iter, test_iter = d2l.load_data_mnist(batch_size=batch_size)
 lr, num_epochs = 0.9, 5
 ctx = d2l.try_gpu()
 
-net.initialize(force_reinit=True, init=init.Xavier())
+net.initialize(force_reinit=True, ctx=ctx, init=init.Xavier())
 
 X = nd.random.uniform(shape=(1, 1, 28, 28))
-net.summary(X)
 
 trainer = gluon.Trainer(net.collect_params(), 'sgd', {'learning_rate': lr})
 d2l.train_ch5(net, train_iter, test_iter, batch_size, trainer, ctx, num_epochs)

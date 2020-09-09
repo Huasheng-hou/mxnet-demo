@@ -1,8 +1,10 @@
-import d2lzh as d2l
 import mxnet as mx
 from mxnet import gluon, init, nd
 from mxnet.gluon import block, nn
 from mxnet.gluon.nn import Sequential, Block, Dense, Conv2D, MaxPool2D
+import sys
+sys.path.append("..")
+import d2lzh as d2l
 
 
 def vgg_block(num_convs, num_channels):
@@ -26,5 +28,7 @@ def vgg(conv_arch):
     return net
 
 
-
+ratio = 4
+conv_arch = ((1, 64), (1, 128), (2, 256), (2, 512), (2, 512))
+small_conv_arch = [(pair[0], pair[1] // ratio) for pair in conv_arch]
 

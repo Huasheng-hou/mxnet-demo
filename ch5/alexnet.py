@@ -1,6 +1,9 @@
-import d2lzh as d2l
+import mxnet
 from mxnet import gluon, init, nd
 from mxnet.gluon import Block, nn, data as gdata
+import sys
+sys.path.append("..")
+import d2lzh as d2l
 
 net = nn.Sequential()
 # 使⽤较⼤的11 x 11窗⼝来捕获物体。同时使⽤步幅4来较⼤幅度减⼩输出⾼和宽。这⾥使⽤的输出通

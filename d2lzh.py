@@ -174,7 +174,6 @@ def train_ch5(net, train_iter, test_iter, batch_size, trainer, ctx, num_epochs):
             train_l_sum += l.asscalar()
             train_acc_sum += (y_hat.argmax(axis=1) == y).sum().asscalar()
             n += y.size
-            print('epoch %d, loss %.4f, train acc %.3f' % (epoch + 1, train_l_sum / n, train_acc_sum / n))
         test_acc = evaluate_accuracy(test_iter, net, ctx)
         print('epoch %d, loss %.4f, train acc %.3f, test acc %.3f, ' 'time %.1f sec'
               % (epoch + 1, train_l_sum / n, train_acc_sum / n, test_acc, time.time() - start))
@@ -182,7 +181,7 @@ def train_ch5(net, train_iter, test_iter, batch_size, trainer, ctx, num_epochs):
 
 def try_gpu():
     try:
-        ctx = mx.gpu()
+        ctx = mx.gpu(0)
         _ = nd.zeros((1,), ctx=ctx)
     except mx.base.MXNetError:
         ctx = mx.cpu()
