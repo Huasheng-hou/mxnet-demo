@@ -1,14 +1,14 @@
 import d2lzh as d2l
 from mxnet import gluon, init, nd
-from mxnet.gluon.nn import Sequential, Conv2D, Dense, MaxPool2D, Dropout
+from mxnet.gluon.nn import Sequential, Conv2D, Dense, MaxPool2D
 
 net = Sequential()
-net.add(Conv2D(channels=6, kernel_size=5, activation='sigmoid'),
+net.add(Conv2D(channels=3, kernel_size=5, activation='sigmoid'),
         MaxPool2D(pool_size=2, strides=2),
-        Conv2D(channels=16, kernel_size=5, activation='sigmoid'),
+        Conv2D(channels=8, kernel_size=5, activation='sigmoid'),
         MaxPool2D(pool_size=2, strides=2),
-        Dense(120, activation='sigmoid'), Dropout(0.05),
-        Dense(84, activation='sigmoid'), Dropout(0.05),
+        Dense(120, activation='sigmoid'),
+        Dense(84, activation='sigmoid'),
         Dense(10))
 
 batch_size = 256

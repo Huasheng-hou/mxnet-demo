@@ -100,7 +100,7 @@ def load_data_mnist(batch_size):
     mnist_test = gdata.vision.MNIST(train=False)
 
     transformer = gdata.vision.transforms.ToTensor()
-    num_workers = 4
+    num_workers = 0
 
     train_iter = gdata.DataLoader(mnist_train.transform_first(transformer),
                                   batch_size, shuffle=True, num_workers=num_workers)
@@ -118,7 +118,7 @@ def load_data_fashion_mnist(batch_size, resize=None):
         transformer += [gdata.vision.transforms.Resize(resize)]
     transformer += [gdata.vision.transforms.ToTensor()]
     transformer = gdata.vision.transforms.Compose(transformer)
-    num_workers = 4
+    num_workers = 0
 
     train_iter = gdata.DataLoader(mnist_train.transform_first(transformer),
                                   batch_size, shuffle=True, num_workers=num_workers)
@@ -160,7 +160,7 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size,
 
 def train_ch5(net, train_iter, test_iter, batch_size, trainer, ctx, num_epochs):
     print('training on', ctx)
-    loss = gloss.SoftmaxCrossEntropyLoss()
+    loss = gloss.SoftmaxCrossEntropyLoss(axis=1)
     for epoch in range(num_epochs):
         train_l_sum, train_acc_sum, n, start = 0.0, 0.0, 0, time.time()
         for X, y in train_iter:
@@ -176,7 +176,7 @@ def train_ch5(net, train_iter, test_iter, batch_size, trainer, ctx, num_epochs):
             n += y.size
         test_acc = evaluate_accuracy(test_iter, net, ctx)
         print('epoch %d, loss %.4f, train acc %.3f, test acc %.3f, ' 'time %.1f sec'
-              % (epoch + 1, train_l_sum / n, train_acc_sum / n, test_acc, time.time() - start))
+              % (epoch + 1, train_l_sum / n, train_acc_sum / n / 28 / 28, test_acc / 28 / 28, time.time() - start))
 
 
 def try_gpu():
