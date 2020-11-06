@@ -172,11 +172,14 @@ def train_ch5(net, train_iter, test_iter, batch_size, trainer, ctx, num_epochs):
             trainer.step(batch_size)
             y = y.astype('float32')
             train_l_sum += l.asscalar()
-            train_acc_sum += (y_hat.argmax(axis=1) == y).sum().asscalar()
+            a = y_hat.argmax(axis=1).reshape(batch_size, 28*28)
+            b = y.reshape(batch_size, 28*28)
+            # train_acc_sum += (y_hat.argmax(axis=1) == y).sum().asscalar()
+            train_acc_sum += (a == b).sum().asscalar()
             n += y.size
         test_acc = evaluate_accuracy(test_iter, net, ctx)
         print('epoch %d, loss %.4f, train acc %.3f, test acc %.3f, ' 'time %.1f sec'
-              % (epoch + 1, train_l_sum / n, train_acc_sum / n / 28 / 28, test_acc / 28 / 28, time.time() - start))
+              % (epoch + 1, train_l_sum / n, train_acc_sum / n, test_acc, time.time() - start))
 
 
 def try_gpu():

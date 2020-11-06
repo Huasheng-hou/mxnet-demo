@@ -27,7 +27,7 @@ def blendData(data_iter=None, imgs=None):
     features = []
     labels = []
 
-    # i = 0
+    i = 0
     for X, y in data_iter:
         digit = X * 255
         digit = digit[0][0].asnumpy()
@@ -40,7 +40,7 @@ def blendData(data_iter=None, imgs=None):
         features.append(res)
         labels.append(digit.astype(int))
         # i += 1
-        # if i == 512:
+        # if i == 256 * 10:
         #     break
 
     dataset = gdata.ArrayDataset(features, labels)
@@ -68,7 +68,7 @@ net.add(Conv2D(channels=3, kernel_size=5, activation='sigmoid'),
         Conv2D(channels=10, kernel_size=1),
         Conv2DTranspose(num_classes, kernel_size=56, padding=14, strides=28, activation='sigmoid'))
 
-lr, num_epochs = 0.9, 20
+lr, num_epochs = 0.9, 10
 ctx = d2l.try_gpu()
 
 net.initialize(force_reinit=True, ctx=ctx, init=init.Xavier())
